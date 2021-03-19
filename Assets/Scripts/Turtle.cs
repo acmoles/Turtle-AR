@@ -21,19 +21,19 @@ public class Turtle : MonoBehaviour
     private IEnumerator DoSequence()
     {
         Debug.Log("Sequence Started!");
-        reporter.ScheduleStart();
-        yield return Move(gameObject, 5f, moveSpeed);
         yield return new WaitForSeconds(2);
+        yield return Move(gameObject, 5f, moveSpeed);
         yield return Turn(gameObject, 80f, rotateSpeed);
         yield return Move(gameObject, 10f, moveSpeed);
+        yield return Turn(gameObject, -120f, rotateSpeed);
+        yield return Move(gameObject, 5f, moveSpeed);
         Debug.Log("Sequence Done!");
-        reporter.ScheduleStop();
     }
 
     private IEnumerator Turn(GameObject objectToMove, float angle, float speed)
     {
-        Debug.Log("start turn");
-        Quaternion end = Quaternion.Euler(0f, angle, 0f);
+        Debug.Log("start turn, Y: " + objectToMove.transform.rotation.eulerAngles.y);
+        Quaternion end = objectToMove.transform.rotation * Quaternion.Euler(0f, angle, 0f);
 
         // speed should be 1 unit per second
         while (objectToMove.transform.rotation != end)
@@ -41,17 +41,20 @@ public class Turtle : MonoBehaviour
             objectToMove.transform.rotation = Quaternion.RotateTowards(objectToMove.transform.rotation, end, speed * Time.deltaTime);
             yield return new WaitForEndOfFrame();
         }
-        Debug.Log("end turn");
+        Debug.Log("end turn, Y: " + objectToMove.transform.rotation.eulerAngles.y);
         yield return null;
     }
 
+    // TODO roll and dive (combine turn and roll)
 
     public IEnumerator Move(GameObject objectToMove, float distance, float speed)
     {
         Debug.Log("start move");
-        Debug.Log(objectToMove.transform.position);
-        Vector3 end = objectToMove.transform.forward * distance;
-        Debug.Log(end);
+        reporter.ScheduleStart();
+
+        // Debug.Log(objectToMove.transform.position);
+        Vector3 end = objectToMove.transform.position + objectToMove.transform.forward * distance;
+        // Debug.Log(end);
 
         // speed should be 1 unit per second
         while (objectToMove.transform.position != end)
@@ -60,6 +63,7 @@ public class Turtle : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
         Debug.Log("end move");
+        reporter.ScheduleStop();
         yield return null;
     }
 
@@ -85,6 +89,6 @@ public class Turtle : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        Debug.DrawLine(gameObject.transform.position, gameObject.transform.position + (gameObject.transform.forward * 1f), Color.red);
     }
 }

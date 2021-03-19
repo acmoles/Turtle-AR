@@ -12,6 +12,7 @@ public class PositionReporter : Detector
 
     protected bool _shouldStart = false;
     protected bool _shouldStop = false;
+    protected bool _shouldSegmentStart = false;
 
     protected bool _didChange = false;
 
@@ -70,6 +71,18 @@ public class PositionReporter : Detector
     }
 
     /// <summary>
+    /// Returns whether or not the value of IsMoving changed to false between this frame and the previous.
+    /// </summary>
+    public virtual bool DidSegmentStart
+    {
+        get
+        {
+            ensureUpToDate();
+            return DidChangeFromLastFrame && !IsMoving;
+        }
+    }
+
+    /// <summary>
     /// Returns the position value of the detected pinch or grab.  If a pinch or grab is not currently being
     /// detected, returns the most recent position value.
     /// </summary>
@@ -91,11 +104,6 @@ public class PositionReporter : Detector
     {
         _shouldStop = true;
     }
-
-    // TODO test class on turtle object moving it with a coroutine
-    // Must have:
-    // Start method invokes SheduleStart
-    // Stop method invokes SheduleStop
 
     void ensureUpToDate()
     {
@@ -159,6 +167,6 @@ public class PositionReporter : Detector
     // Update is called once per frame
     void Update()
     {
-        
+        ensureUpToDate();
     }
 }

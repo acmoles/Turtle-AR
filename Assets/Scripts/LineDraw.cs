@@ -161,21 +161,24 @@ using System.Collections.Generic;
       private void addRing(Vector3 ringPosition) {
         _rings++;
 
-        // TODO custom line start logic to get tapers
+            // TODO custom line start logic to get tapers
 
-        // TODO custom line end logic?
+            // TODO custom line end logic?
 
-        if (_rings == 1) {
-          addVertexRing();
-          addVertexRing();
-          addTriSegment();
+        if (_rings == 1)
+        {
+            addVertexRing(_parent._drawColor);
+            addVertexRing(Color.red);
+            addTriSegment();
         }
 
-        addVertexRing();
+        addVertexRing(_parent._drawColor);
         addTriSegment();
 
         Vector3 ringNormal = Vector3.zero;
         if (_rings == 2) {
+
+          // TODO direction could be from turtle
           Vector3 direction = ringPosition - _prevRing0;
           float angleToUp = Vector3.Angle(direction, Vector3.up);
 
@@ -198,25 +201,29 @@ using System.Collections.Generic;
                           _prevRing0,
                           ringPosition - _prevRing1,
                           _prevNormal0,
-                          0);
+                          0,
+                          Color.red);
         }
 
         if (_rings >= 2) {
-          updateRingVerts(_vertices.Count - _parent._drawResolution,
-                          ringPosition,
-                          ringPosition - _prevRing0,
-                          ringNormal,
-                          0);
+          updateRingVerts(_vertices.Count - _parent._drawResolution, // Offset
+                          ringPosition,                              // Ring position
+                          ringPosition - _prevRing0,                 // Direction
+                          ringNormal,                                // Normal
+                          0f,
+                          Color.yellow);                                        // Radius Scale
           updateRingVerts(_vertices.Count - _parent._drawResolution * 2,
                           ringPosition,
                           ringPosition - _prevRing0,
                           ringNormal,
-                          1);
+                          1f,
+                          Color.green);
           updateRingVerts(_vertices.Count - _parent._drawResolution * 3,
                           _prevRing0,
                           ringPosition - _prevRing1,
                           _prevNormal0,
-                          1);
+                          1f,
+                          Color.blue);
         }
 
         _prevRing1 = _prevRing0;
@@ -225,11 +232,12 @@ using System.Collections.Generic;
         _prevNormal0 = ringNormal;
       }
 
-      private void addVertexRing() {
+      private void addVertexRing(Color colorOverride) {
         for (int i = 0; i < _parent._drawResolution; i++) {
           _vertices.Add(Vector3.zero);  //Dummy vertex, is updated later
           _uvs.Add(new Vector2(i / (_parent._drawResolution - 1.0f), 0));
-          _colors.Add(_parent._drawColor);
+          //_colors.Add(_parent._drawColor);
+          _colors.Add(colorOverride);
         }
       }
 
@@ -249,7 +257,7 @@ using System.Collections.Generic;
         }
       }
 
-      private void updateRingVerts(int offset, Vector3 ringPosition, Vector3 direction, Vector3 normal, float radiusScale) {
+      private void updateRingVerts(int offset, Vector3 ringPosition, Vector3 direction, Vector3 normal, float radiusScale, Color visColour) {
         direction = direction.normalized;
         normal = normal.normalized;
 
@@ -258,6 +266,10 @@ using System.Collections.Generic;
           Quaternion rotator = Quaternion.AngleAxis(angle, direction);
           Vector3 ringSpoke = rotator * normal * _parent._drawRadius * radiusScale;
           _vertices[offset + i] = ringPosition + ringSpoke;
+          //if (_rings == 2)
+          //  {
+                VisualizePosition.Create(null, ringPosition + ringSpoke + (Vector3.one * (offset/100)), 0.025f, visColour);
+            //}
         }
       }
     }

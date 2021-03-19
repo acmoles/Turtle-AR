@@ -127,7 +127,7 @@ print ""Loaded context code""
 
         if (logging) Debug.Log("Getting global: ");
         ValMap val = interpreter.GetGlobalValue(globalVarName) as ValMap;
-        if (val != null) Debug.Log(val);
+        if (val != null && logging) Debug.Log(val);
 
         yield return new WaitForSeconds(waitTime);
 
