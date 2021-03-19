@@ -23,9 +23,6 @@ using System.Collections.Generic;
     private Color _drawColor = Color.white;
 
     [SerializeField]
-    private float _smoothingDelay = 0.01f;
-
-    [SerializeField]
     private float _drawRadius = 0.002f;
 
     [SerializeField]
@@ -63,7 +60,7 @@ using System.Collections.Generic;
 
     void Awake() {
       if (_positionReporters.Length == 0) {
-        Debug.LogWarning("No pinch detectors were specified!  PinchDraw can not draw any lines without PinchDetectors.");
+        Debug.LogWarning("No detectors were specified!  LineDraw can not draw any lines without detectors.");
       }
     }
 

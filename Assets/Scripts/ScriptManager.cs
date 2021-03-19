@@ -9,6 +9,8 @@ public class ScriptManager : MonoBehaviour
 {
     static bool intrinsicsAdded = false;
 
+    public bool logging = false;
+
     public Interpreter interpreter;
     public String lastError;
 
@@ -57,14 +59,18 @@ print ""Loaded context code""
     {
         interpreter = new Interpreter();
 
-        interpreter.standardOutput = (string s) => Debug.Log(s);
-        interpreter.implicitOutput = (string s) => Debug.Log(
-            "<color=#66bb66>" + s + "</color>");
-        interpreter.errorOutput = (string s) => {
-            Debug.Log("<color=red>" + s + "</color>");
-            interpreter.Stop();
-            lastError = s;
-        };
+        if (logging)
+        {
+            interpreter.standardOutput = (string s) => Debug.Log(s);
+            interpreter.implicitOutput = (string s) => Debug.Log(
+                "<color=#66bb66>" + s + "</color>");
+            interpreter.errorOutput = (string s) =>
+            {
+                Debug.Log("<color=red>" + s + "</color>");
+                interpreter.Stop();
+                lastError = s;
+            };
+        }
 
         AddIntrinsics();
 
@@ -119,13 +125,13 @@ print ""Loaded context code""
     {
         yield return new WaitForSeconds(waitTime);
 
-        Debug.Log("Getting global: ");
+        if (logging) Debug.Log("Getting global: ");
         ValMap val = interpreter.GetGlobalValue(globalVarName) as ValMap;
         if (val != null) Debug.Log(val);
 
         yield return new WaitForSeconds(waitTime);
 
-        Debug.Log("Setting global...");
+        if (logging) Debug.Log("Setting global...");
 
         transform.position = transform.position += new Vector3(50f, 10f, 0f);
         transform.localEulerAngles += new Vector3(0f, 0f, 270f);
@@ -134,10 +140,10 @@ print ""Loaded context code""
 
         yield return new WaitForSeconds(waitTime);
 
-        Debug.Log("Getting global 2nd time: ");
+        if (logging) Debug.Log("Getting global 2nd time: ");
         // TODO get globals method (and globals struct in class?)
         val = interpreter.GetGlobalValue(globalVarName) as ValMap;
-        if (val != null) Debug.Log(val["x"]);
+        if (val != null && logging) Debug.Log(val["x"]);
     }
 
     void setMyGlobals(float x, float y, float rot)
@@ -154,11 +160,15 @@ print ""Loaded context code""
 
     bool IntrinsicChange(ValMap global, float distance)
     {
-        Debug.Log("Getting global from inside intrinsic context: ");
-        Debug.Log(global);
+        if (logging)
+        {
+            Debug.Log("Getting global from inside intrinsic context: ");
+            Debug.Log(global);
 
-        Debug.Log("Getting intrinsic param: ");
-        Debug.Log(distance);
+
+            Debug.Log("Getting intrinsic param: ");
+            Debug.Log(distance);
+        }
         return true;
     }
 }
