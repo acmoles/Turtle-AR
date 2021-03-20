@@ -78,10 +78,12 @@ using System.Collections.Generic;
 
         if (reporter.DidStart) {
           drawState.BeginNewLine();
+          // TODO zero state end cap that actually starts at turn/start position
         }
 
         if (reporter.DidStop) {
           drawState.FinishLine();
+          // TODO ensure end-of line as drawn forms a nice end cap when finishing
         }
 
         if (reporter.IsMoving) {
@@ -89,6 +91,7 @@ using System.Collections.Generic;
         }
       }
     }
+    // OR proper mitre joints for segments - continuous line?
 
     private class DrawState {
       private List<Vector3> _vertices = new List<Vector3>();
@@ -216,7 +219,7 @@ using System.Collections.Generic;
                           ringPosition,
                           ringPosition - _prevRing0,
                           ringNormal,
-                          1f,
+                          0.5f,
                           Color.green);
           updateRingVerts(_vertices.Count - _parent._drawResolution * 3,
                           _prevRing0,
@@ -266,11 +269,11 @@ using System.Collections.Generic;
           Quaternion rotator = Quaternion.AngleAxis(angle, direction);
           Vector3 ringSpoke = rotator * normal * _parent._drawRadius * radiusScale;
           _vertices[offset + i] = ringPosition + ringSpoke;
-          //if (_rings == 2)
-          //  {
-                VisualizePosition.Create(null, ringPosition + ringSpoke + (Vector3.one * (offset/100)), 0.025f, visColour);
-            //}
-        }
+                if (_rings == 2)
+                {
+                    VisualizePosition.Create(null, ringPosition + ringSpoke + (Vector3.one * (offset/100)), 0.025f, visColour);
+                }
+            }
       }
     }
   }
