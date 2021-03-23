@@ -21,7 +21,9 @@ public class Turtle : MonoBehaviour
     private IEnumerator DoSequence()
     {
         Debug.Log("Sequence Started!");
-        yield return new WaitForSeconds(2);
+        reporter.ScheduleStart();
+        yield return null;
+        //yield return new WaitForSeconds(2);
         yield return Move(gameObject, 5f, moveSpeed);
         yield return Turn(gameObject, 80f, rotateSpeed);
         yield return Move(gameObject, 10f, moveSpeed);
@@ -31,6 +33,7 @@ public class Turtle : MonoBehaviour
         yield return Move(gameObject, 10f, moveSpeed);
         yield return Turn(gameObject, -120f, rotateSpeed);
         yield return Move(gameObject, 5f, moveSpeed);
+        reporter.ScheduleStop();
         Debug.Log("Sequence Done!");
     }
 
@@ -54,7 +57,6 @@ public class Turtle : MonoBehaviour
     public IEnumerator Move(GameObject objectToMove, float distance, float speed)
     {
         Debug.Log("start move");
-        reporter.ScheduleStart();
 
         // Debug.Log(objectToMove.transform.position);
         Vector3 end = objectToMove.transform.position + objectToMove.transform.forward * distance;
@@ -67,7 +69,7 @@ public class Turtle : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
         Debug.Log("end move");
-        reporter.ScheduleStop();
+        
         yield return null;
     }
 

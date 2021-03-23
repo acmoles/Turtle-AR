@@ -165,6 +165,7 @@ using System.Collections.Generic;
         _rings++;
 
             // TODO custom line start logic to get tapers
+            // For N segments going back apply sizing function depending on length
 
             // TODO custom line end logic?
 
@@ -182,6 +183,7 @@ using System.Collections.Generic;
         if (_rings == 2) {
 
           // TODO direction could be from turtle
+          // Plane approach from pipe mesh generator?
           Vector3 direction = ringPosition - _prevRing0;
           float angleToUp = Vector3.Angle(direction, Vector3.up);
 
@@ -192,6 +194,7 @@ using System.Collections.Generic;
           }
 
           ringNormal = ringNormal.normalized;
+
 
           _prevNormal0 = ringNormal;
         } else if (_rings > 2) {
@@ -213,8 +216,8 @@ using System.Collections.Generic;
                           ringPosition,                              // Ring position
                           ringPosition - _prevRing0,                 // Direction
                           ringNormal,                                // Normal
-                          0f,
-                          Color.yellow);                                        // Radius Scale
+                          0f,                                        // Radius Scale
+                          Color.yellow);                                        
           updateRingVerts(_vertices.Count - _parent._drawResolution * 2,
                           ringPosition,
                           ringPosition - _prevRing0,

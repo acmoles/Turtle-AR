@@ -167,6 +167,6 @@ public class PositionReporter : Detector
     // Update is called once per frame
     void Update()
     {
-        ensureUpToDate();
+        //ensureUpToDate();
     }
 }
