@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class Turtle : MonoBehaviour
 {
-    public float moveTime = 5f;
+    //public float moveTime = 5f;
+    public float moveAcceleration = 2f;
     public float moveSpeed = 5f;
+    public float rotateAcceleration = 20f;
     public float rotateSpeed = 200f;
 
     private PositionReporter reporter;
@@ -23,7 +25,7 @@ public class Turtle : MonoBehaviour
         Debug.Log("Sequence Started!");
         reporter.ScheduleStart();
         yield return null;
-        //yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(2);
         yield return Move(gameObject, 5f, moveSpeed);
         yield return Turn(gameObject, 80f, rotateSpeed);
         yield return Move(gameObject, 10f, moveSpeed);
@@ -35,6 +37,7 @@ public class Turtle : MonoBehaviour
         yield return Move(gameObject, 5f, moveSpeed);
         reporter.ScheduleStop();
         Debug.Log("Sequence Done!");
+        // TODO repeat sequence button in Unity UI
     }
 
     private IEnumerator Turn(GameObject objectToMove, float angle, float speed)
@@ -42,7 +45,7 @@ public class Turtle : MonoBehaviour
         Debug.Log("start turn, Y: " + objectToMove.transform.rotation.eulerAngles.y);
         Quaternion end = objectToMove.transform.rotation * Quaternion.Euler(0f, angle, 0f);
 
-        // speed should be 1 unit per second
+        // TODO use acceleration/deceleration 
         while (objectToMove.transform.rotation != end)
         {
             objectToMove.transform.rotation = Quaternion.RotateTowards(objectToMove.transform.rotation, end, speed * Time.deltaTime);
@@ -57,12 +60,10 @@ public class Turtle : MonoBehaviour
     public IEnumerator Move(GameObject objectToMove, float distance, float speed)
     {
         Debug.Log("start move");
-
-        // Debug.Log(objectToMove.transform.position);
+        
         Vector3 end = objectToMove.transform.position + objectToMove.transform.forward * distance;
-        // Debug.Log(end);
 
-        // speed should be 1 unit per second
+        // TODO use acceleration/deceleration 
         while (objectToMove.transform.position != end)
         {
             objectToMove.transform.position = Vector3.MoveTowards(objectToMove.transform.position, end, speed * Time.deltaTime);
@@ -73,8 +74,14 @@ public class Turtle : MonoBehaviour
         yield return null;
     }
 
+    //tranform.Translate(Vector3.forward* curSpeed);
+ 
+    //curSpeed += acceleration;
+ 
+    //if (curSpeed > maxSpeed)
+    //    curSpeed = maxSpeed;
 
-
+    // TODO and slowing down before stopping?
 
 
     public IEnumerator MoveOverSeconds(GameObject objectToMove, Vector3 end, float seconds)
