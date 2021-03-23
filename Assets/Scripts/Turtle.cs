@@ -5,6 +5,7 @@ using UnityEngine;
 public class Turtle : MonoBehaviour
 {
     //public float moveTime = 5f;
+    public bool logging = false;
     public float moveAcceleration = 2f;
     public float moveSpeed = 5f;
     public float rotateAcceleration = 20f;
@@ -42,7 +43,7 @@ public class Turtle : MonoBehaviour
 
     private IEnumerator Turn(GameObject objectToMove, float angle, float speed)
     {
-        Debug.Log("start turn, Y: " + objectToMove.transform.rotation.eulerAngles.y);
+        if (logging) Debug.Log("start turn, Y: " + objectToMove.transform.rotation.eulerAngles.y);
         Quaternion end = objectToMove.transform.rotation * Quaternion.Euler(0f, angle, 0f);
 
         // TODO use acceleration/deceleration 
@@ -51,7 +52,7 @@ public class Turtle : MonoBehaviour
             objectToMove.transform.rotation = Quaternion.RotateTowards(objectToMove.transform.rotation, end, speed * Time.deltaTime);
             yield return new WaitForEndOfFrame();
         }
-        Debug.Log("end turn, Y: " + objectToMove.transform.rotation.eulerAngles.y);
+        if (logging) Debug.Log("end turn, Y: " + objectToMove.transform.rotation.eulerAngles.y);
         yield return null;
     }
 
@@ -59,7 +60,7 @@ public class Turtle : MonoBehaviour
 
     public IEnumerator Move(GameObject objectToMove, float distance, float speed)
     {
-        Debug.Log("start move");
+        if (logging) Debug.Log("start move");
         
         Vector3 end = objectToMove.transform.position + objectToMove.transform.forward * distance;
 
@@ -69,7 +70,7 @@ public class Turtle : MonoBehaviour
             objectToMove.transform.position = Vector3.MoveTowards(objectToMove.transform.position, end, speed * Time.deltaTime);
             yield return new WaitForEndOfFrame();
         }
-        Debug.Log("end move");
+        if (logging) Debug.Log("end move");
         
         yield return null;
     }
@@ -86,7 +87,7 @@ public class Turtle : MonoBehaviour
 
     public IEnumerator MoveOverSeconds(GameObject objectToMove, Vector3 end, float seconds)
     {
-        Debug.Log("start move");
+        if (logging) Debug.Log("start move");
         float elapsedTime = 0;
         Vector3 startingPos = objectToMove.transform.position;
         while (elapsedTime < seconds)
@@ -96,7 +97,7 @@ public class Turtle : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
         transform.position = end;
-        Debug.Log("end move");
+        if (logging) Debug.Log("end move");
     }
 
     // Update is called once per frame
