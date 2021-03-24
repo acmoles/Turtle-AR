@@ -12,7 +12,6 @@ public class PositionReporter : Detector
 
     protected bool _shouldStart = false;
     protected bool _shouldStop = false;
-    protected bool _shouldSegmentStart = false;
 
     protected bool _didChange = false;
 
@@ -26,7 +25,7 @@ public class PositionReporter : Detector
     /// Returns whether or not the value of IsActive is different than the value reported during
     /// the previous frame.
     /// </summary>
-    public virtual bool DidChangeFromLastFrame
+    public virtual bool DidChange
     {
         get
         {
@@ -54,7 +53,7 @@ public class PositionReporter : Detector
         get
         {
             ensureUpToDate();
-            return DidChangeFromLastFrame && IsMoving;
+            return DidChange && IsMoving;
         }
     }
 
@@ -66,19 +65,7 @@ public class PositionReporter : Detector
         get
         {
             ensureUpToDate();
-            return DidChangeFromLastFrame && !IsMoving;
-        }
-    }
-
-    /// <summary>
-    /// Returns whether or not the value of IsMoving changed to false between this frame and the previous.
-    /// </summary>
-    public virtual bool DidSegmentStart
-    {
-        get
-        {
-            ensureUpToDate();
-            return DidChangeFromLastFrame && !IsMoving;
+            return DidChange && !IsMoving;
         }
     }
 
@@ -158,13 +145,6 @@ public class PositionReporter : Detector
         }
     }
 
-
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
     void Update()
     {
         //ensureUpToDate();

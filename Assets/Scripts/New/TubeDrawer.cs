@@ -8,6 +8,9 @@ public class TubeDrawer : MonoBehaviour
     private PositionReporter[] _positionReporters;
 
     [SerializeField]
+    private ColorReporter[] _ColorReporters;
+
+    [SerializeField]
     private Material _material;
 
     [SerializeField]
@@ -61,6 +64,11 @@ public class TubeDrawer : MonoBehaviour
         {
             Debug.LogWarning("No detectors were specified! TubeDraw can not draw any lines without detectors.");
         }
+
+        if (_ColorReporters.Length != 0 && _ColorReporters.Length != _positionReporters.Length)
+        {
+            Debug.LogWarning("Needs position reporter and color reporter at same index.");
+        }
     }
 
     void Start()
@@ -92,6 +100,21 @@ public class TubeDrawer : MonoBehaviour
             if (reporter.IsMoving)
             {
                 drawState.UpdateLine(reporter.Position);
+            }
+        }
+
+        if (_ColorReporters.Length != 0)
+        {
+            for (int i = 0; i < _ColorReporters.Length; i++)
+            {
+                var reporter = _ColorReporters[i];
+                var drawState = _drawStates[i];
+
+                if (reporter.ColorChanged)
+                {
+                    //drawState.SetColor(reporter.Color);
+                    Debug.Log("Color changed: " + reporter.Color);
+                }
             }
         }
     }

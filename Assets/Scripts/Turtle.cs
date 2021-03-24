@@ -12,11 +12,13 @@ public class Turtle : MonoBehaviour
     public float rotateSpeed = 200f;
 
     private PositionReporter reporter;
+    private ColorReporter colorReporter;
 
     // Start is called before the first frame update
     void Start()
     {
         reporter = GetComponent<PositionReporter>();
+        colorReporter = GetComponent<ColorReporter>();
         //StartCoroutine(MoveOverSeconds(gameObject, endPosition, moveTime));
         StartCoroutine(DoSequence());
     }
@@ -30,8 +32,9 @@ public class Turtle : MonoBehaviour
         yield return Move(gameObject, 5f, moveSpeed);
         yield return Turn(gameObject, 80f, rotateSpeed);
         yield return Move(gameObject, 10f, moveSpeed);
-        //yield return Turn(gameObject, -120f, rotateSpeed);
-        //yield return Move(gameObject, 5f, moveSpeed);
+        yield return Turn(gameObject, -120f, rotateSpeed);
+        yield return SetColor(Color.red);
+        yield return Move(gameObject, 5f, moveSpeed);
         //yield return Turn(gameObject, 80f, rotateSpeed);
         //yield return Move(gameObject, 10f, moveSpeed);
         //yield return Turn(gameObject, -120f, rotateSpeed);
@@ -83,6 +86,13 @@ public class Turtle : MonoBehaviour
     //    curSpeed = maxSpeed;
 
     // TODO and slowing down before stopping?
+
+
+    public IEnumerator SetColor(Color color)
+    {
+        colorReporter.SetColor(color);
+        yield return null;
+    }
 
 
     public IEnumerator MoveOverSeconds(GameObject objectToMove, Vector3 end, float seconds)
