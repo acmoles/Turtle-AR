@@ -30,12 +30,12 @@ public class Turtle : MonoBehaviour
         yield return Move(gameObject, 5f, moveSpeed);
         yield return Turn(gameObject, 80f, rotateSpeed);
         yield return Move(gameObject, 10f, moveSpeed);
-        yield return Turn(gameObject, -120f, rotateSpeed);
-        yield return Move(gameObject, 5f, moveSpeed);
-        yield return Turn(gameObject, 80f, rotateSpeed);
-        yield return Move(gameObject, 10f, moveSpeed);
-        yield return Turn(gameObject, -120f, rotateSpeed);
-        yield return Move(gameObject, 5f, moveSpeed);
+        //yield return Turn(gameObject, -120f, rotateSpeed);
+        //yield return Move(gameObject, 5f, moveSpeed);
+        //yield return Turn(gameObject, 80f, rotateSpeed);
+        //yield return Move(gameObject, 10f, moveSpeed);
+        //yield return Turn(gameObject, -120f, rotateSpeed);
+        //yield return Move(gameObject, 5f, moveSpeed);
         reporter.ScheduleStop();
         Debug.Log("Sequence Done!");
         // TODO repeat sequence button in Unity UI

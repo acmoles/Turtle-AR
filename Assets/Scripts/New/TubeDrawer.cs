@@ -102,7 +102,7 @@ public class TubeDrawer : MonoBehaviour
 
         foreach (DrawState state in _drawStates)
         {
-            foreach (Vector3 linePoint in state._points)
+            foreach (Vector3 linePoint in state._smoothPoints)
             {
                 // Draw circle gizmo
                 Gizmos.color = Color.red;
@@ -116,6 +116,7 @@ public class TubeDrawer : MonoBehaviour
     {
         private Vector3 _prevPoint = Vector3.zero;
         public List<Vector3> _points = new List<Vector3>();
+        public List<Vector3> _smoothPoints = new List<Vector3>();
         private List<Color> _colors = new List<Color>();
         private List<float> _radii = new List<float>();
 
@@ -127,6 +128,7 @@ public class TubeDrawer : MonoBehaviour
 
         private int _startTaper = 3;
         private int _endTaper = 3;
+        private int _amountToAverage = 3;
 
         public DrawState(TubeDrawer parent)
         {
@@ -137,6 +139,7 @@ public class TubeDrawer : MonoBehaviour
         {
             _prevPoint = Vector3.zero;
             _points.Clear();
+            _smoothPoints.Clear();
             _colors.Clear();
             _radii.Clear();
 
@@ -171,15 +174,19 @@ public class TubeDrawer : MonoBehaviour
             if (shouldAdd)
             {
                 _points.Add(position);
+                _smoothPoints.Clear();
+                for (int i = 0; i < _points.Count; i++)
+                {
+                    AveragePoints(i);
+                }
                 _colors.Add(_parent.DrawColor); // TODO interface this with tube class
                 _radii.Add(_parent.DrawRadius);
 
                 if (_points.Count >= 2)
                 {
-                    // TODO smooth points, especially elbows
-                    UpdateRadii(); 
+                    UpdateRadii();
                     _tube.Create(
-                        _points.ToArray(),        // Polyline points
+                        _smoothPoints.ToArray(),  // Polyline points
                         1f,                       // Decimation (not used currently)
                         1f,                       // Scale (not used currently)
                         _radii.ToArray(),         // Radius at point
@@ -202,13 +209,13 @@ public class TubeDrawer : MonoBehaviour
             for (int i = 0; i < _tube.resolution; i++)
             {
                 // Start vertices
-                _tube.vertices[i] = Vector3.Lerp(_points[0], _points[1], 0.6f);
+                _tube.vertices[i] = Vector3.Lerp(_smoothPoints[0], _smoothPoints[1], 0.6f);
             }
             int lastFullRingVerts = _tube.vertices.Length - 4 - _tube.resolution * 5;
             for (int i = lastFullRingVerts; i < _tube.vertices.Length; i++)
             {
                 // End vertices
-                _tube.vertices[i] = Vector3.Lerp(_points[_points.Count - 2], _points[_points.Count -1], 0.4f);
+                _tube.vertices[i] = Vector3.Lerp(_smoothPoints[_points.Count - 2], _smoothPoints[_points.Count - 1], 0.4f);
             }
 
             _mesh.SetVertices(_tube.vertices);
@@ -217,6 +224,7 @@ public class TubeDrawer : MonoBehaviour
             _mesh.SetIndices(_tube.tris, MeshTopology.Triangles, 0);
             _mesh.RecalculateBounds();
             _mesh.RecalculateNormals();
+
             // Modify normals
             Vector3[] normals = _mesh.normals;
 
@@ -225,10 +233,12 @@ public class TubeDrawer : MonoBehaviour
             {
                 normals[i] = normals[i - _tube.resolution + 1];
             }
+            // End point normal
             for (int i = lastFullRing; i < normals.Length; i++)
             {
                 normals[i] = normals[lastFullRing - 1];
             }
+            // Start point normal
             Vector3 startNormal = Vector3.zero;
             for (int i = 0; i < _tube.resolution; i++)
             {
@@ -241,9 +251,6 @@ public class TubeDrawer : MonoBehaviour
             }
             // assign the array of normals to the mesh
             _mesh.SetNormals(normals);
-
-
-            //_mesh.SetVertices(_tube.vertices);
         }
 
         float UpdateRadii()
@@ -258,7 +265,7 @@ public class TubeDrawer : MonoBehaviour
                 //Debug.Log("taper amount: " + amount);
 
                 float progress = (float)i / _radii.Count;
-                amount += 0.1f * (Mathf.Cos(progress) * Mathf.Cos(progress * 300f) * Mathf.Cos(progress * 800f));
+                amount += 0.16f * (Mathf.Cos(progress) * Mathf.Cos(progress * 300f) * Mathf.Cos(progress * 800f));
                 //Debug.Log("progress: " + progress);
                 //_radii[i] = (1f - Mathf.Pow(Mathf.Abs(progress - 0.5f) * 2f, 2f)) * 0.2f;
 
@@ -276,36 +283,26 @@ public class TubeDrawer : MonoBehaviour
             return 1f;
         }
 
-        void GenerateSmooth() // Not used
+        void AveragePoints(int index)
         {
-            Debug.Log("Before smooth: " + _points.Count);
-            Vector3[] smoothPoints = LineSmoother.SmoothLine(_points.ToArray(), 1f);
-            Debug.Log("After smooth: " + smoothPoints.Length);
-
-            float[] smoothedRadii = new float[smoothPoints.Length];
-
-            for (int i = 0; i < smoothedRadii.Length; i++)
+            if (index <= _startTaper + _amountToAverage
+                || index >= _points.Count - _endTaper)
             {
-                smoothedRadii[i] = _parent.DrawRadius;
+                _smoothPoints.Add(_points[index]);
+                return;
             }
 
-            _points.Clear();
+            Vector3 acumulator = Vector3.zero;
+            Vector3 averageVector;
 
-            for (int i = 0; i < smoothPoints.Length; i++)
+            for (int i = -1; i < _amountToAverage - 1; i++)
             {
-                _points.Add(smoothPoints[i]);
+                acumulator += _points[index + i];
             }
+            averageVector = acumulator / (float)_amountToAverage;
 
-            _tube.Create(
-                smoothPoints,             // Polyline points
-                1f,                       // Decimation (not used currently)
-                1f,                       // Scale (not used currently)
-                smoothedRadii,            // Radius at point
-                _parent._drawResolution   // Circle resolution
-            );
-            UpdateMesh();
+            _smoothPoints.Add(averageVector);
         }
     }
-
 }
 
