@@ -758,7 +758,7 @@ MonoBehaviour:
   _material: {fileID: 2100000, guid: 90f5d90ec992f4983aea366642a31d25, type: 2}
   _drawColor: {r: 1, g: 1, b: 1, a: 1}
   _drawRadius: 0.2
-  _drawResolution: 8
+  _drawResolution: 6
   _minSegmentLength: 0.16
 --- !u!4 &1599360587
 Transform:

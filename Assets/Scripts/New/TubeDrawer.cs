@@ -126,7 +126,7 @@ public class TubeDrawer : MonoBehaviour
         private Mesh _mesh;
 
         private int _startTaper = 3;
-        private int _endTaper = 2;
+        private int _endTaper = 3;
 
         public DrawState(TubeDrawer parent)
         {
@@ -176,7 +176,8 @@ public class TubeDrawer : MonoBehaviour
 
                 if (_points.Count >= 2)
                 {
-                    UpdateRadii(); // TODO sets radius curve
+                    // TODO smooth points, especially elbows
+                    UpdateRadii(); 
                     _tube.Create(
                         _points.ToArray(),        // Polyline points
                         1f,                       // Decimation (not used currently)
@@ -197,6 +198,19 @@ public class TubeDrawer : MonoBehaviour
 
         private void UpdateMesh()
         {
+            // Post process end vertices
+            for (int i = 0; i < _tube.resolution; i++)
+            {
+                // Start vertices
+                _tube.vertices[i] = Vector3.Lerp(_points[0], _points[1], 0.6f);
+            }
+            int lastFullRingVerts = _tube.vertices.Length - 4 - _tube.resolution * 5;
+            for (int i = lastFullRingVerts; i < _tube.vertices.Length; i++)
+            {
+                // End vertices
+                _tube.vertices[i] = Vector3.Lerp(_points[_points.Count - 2], _points[_points.Count -1], 0.4f);
+            }
+
             _mesh.SetVertices(_tube.vertices);
             _mesh.SetColors(_tube.colors);
             _mesh.SetUVs(0, _tube.uv);
@@ -206,12 +220,30 @@ public class TubeDrawer : MonoBehaviour
             // Modify normals
             Vector3[] normals = _mesh.normals;
 
-            for (int i = _tube.resolution - 1; i < normals.Length; i += _tube.resolution)
+            int lastFullRing = (_tube.vertices.Length - 2) - _tube.resolution * 5;
+            for (int i = _tube.resolution - 1; i < lastFullRing; i += _tube.resolution)
             {
                 normals[i] = normals[i - _tube.resolution + 1];
             }
+            for (int i = lastFullRing; i < normals.Length; i++)
+            {
+                normals[i] = normals[lastFullRing - 1];
+            }
+            Vector3 startNormal = Vector3.zero;
+            for (int i = 0; i < _tube.resolution; i++)
+            {
+                startNormal += normals[i];
+                startNormal.Normalize();
+            }
+            for (int i = 0; i < _tube.resolution; i++)
+            {
+                normals[i] = startNormal;
+            }
             // assign the array of normals to the mesh
-            _mesh.normals = normals;
+            _mesh.SetNormals(normals);
+
+
+            //_mesh.SetVertices(_tube.vertices);
         }
 
         float UpdateRadii()
@@ -222,16 +254,20 @@ public class TubeDrawer : MonoBehaviour
                 float amount = Mathf.Min(Mathf.Min(1f, (float)i / _startTaper), Mathf.Min(1f, (float)(_radii.Count - i - 1) / _endTaper));
                 amount -= 1f;
                 amount *= amount;
-                // TODO extra ring in first and last segment?
-                amount = Mathf.Max(1f - amount, 0.1f);
-                //amount = 1f - amount;
-                Debug.Log("taper amount: " + amount);
+                amount = 1f - amount;
+                //Debug.Log("taper amount: " + amount);
 
                 float progress = (float)i / _radii.Count;
+                amount += 0.1f * (Mathf.Cos(progress) * Mathf.Cos(progress * 300f) * Mathf.Cos(progress * 800f));
                 //Debug.Log("progress: " + progress);
-                //_radii[i] = (1f - progress) * _parent.DrawRadius;
-                //_radii[i] = Mathf.Sin(50 * progress) * _parent.DrawRadius;
                 //_radii[i] = (1f - Mathf.Pow(Mathf.Abs(progress - 0.5f) * 2f, 2f)) * 0.2f;
+
+                // Special case for end vertices
+                if (i == 0 || i == _radii.Count - 1)
+                {
+                    amount = 0f;
+                }
+
                 _radii[i] = amount * _parent.DrawRadius;
                 //Debug.Log(_radii[i]);
             }
