@@ -905,7 +905,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   logging: 0
   moveAcceleration: 2
-  moveSpeed: 20
+  moveSpeed: 12
   rotateAcceleration: 20
   rotateSpeed: 180
 --- !u!114 &1733488488

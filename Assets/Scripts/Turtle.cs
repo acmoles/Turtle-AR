@@ -32,12 +32,13 @@ public class Turtle : MonoBehaviour
         yield return Move(gameObject, 5f, moveSpeed);
         yield return Turn(gameObject, 80f, rotateSpeed);
         yield return SetColor(Color.blue);
-        yield return Move(gameObject, 10f, moveSpeed);
+        yield return Move(gameObject, 6f, moveSpeed);
         yield return Turn(gameObject, -120f, rotateSpeed);
-        yield return SetColor(Color.green);
-        yield return Move(gameObject, 5f, moveSpeed);
+        yield return Move(gameObject, 4f, moveSpeed);
         yield return Turn(gameObject, 80f, rotateSpeed);
-        yield return Move(gameObject, 10f, moveSpeed);
+        yield return Dive(gameObject, -40f, rotateSpeed);
+        yield return SetColor(Color.green);
+        yield return Move(gameObject, 4f, moveSpeed);
         //yield return Turn(gameObject, -120f, rotateSpeed);
         //yield return Move(gameObject, 5f, moveSpeed);
         reporter.ScheduleStop();
@@ -57,6 +58,21 @@ public class Turtle : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
         if (logging) Debug.Log("end turn, Y: " + objectToMove.transform.rotation.eulerAngles.y);
+        yield return null;
+    }
+
+    private IEnumerator Dive(GameObject objectToMove, float angle, float speed)
+    {
+        if (logging) Debug.Log("start dive, X: " + objectToMove.transform.rotation.eulerAngles.x);
+        Quaternion end = objectToMove.transform.rotation * Quaternion.Euler(angle, 0f, 0f);
+
+        // TODO use acceleration/deceleration 
+        while (objectToMove.transform.rotation != end)
+        {
+            objectToMove.transform.rotation = Quaternion.RotateTowards(objectToMove.transform.rotation, end, speed * Time.deltaTime);
+            yield return new WaitForEndOfFrame();
+        }
+        if (logging) Debug.Log("end dive, X: " + objectToMove.transform.rotation.eulerAngles.x);
         yield return null;
     }
 
