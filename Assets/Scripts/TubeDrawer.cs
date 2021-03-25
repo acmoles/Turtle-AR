@@ -82,6 +82,21 @@ public class TubeDrawer : MonoBehaviour
 
     void Update()
     {
+        if (_ColorReporters.Length != 0)
+        {
+            for (int i = 0; i < _ColorReporters.Length; i++)
+            {
+                var reporter = _ColorReporters[i];
+                var drawState = _drawStates[i];
+
+                if (reporter.ColorChanged)
+                {
+                    _drawColor = reporter.Color;
+                    Debug.Log("Color changed: " + _drawColor);
+                }
+            }
+        }
+
         for (int i = 0; i < _positionReporters.Length; i++)
         {
             var reporter = _positionReporters[i];
@@ -100,21 +115,6 @@ public class TubeDrawer : MonoBehaviour
             if (reporter.IsMoving)
             {
                 drawState.UpdateLine(reporter.Position);
-            }
-        }
-
-        if (_ColorReporters.Length != 0)
-        {
-            for (int i = 0; i < _ColorReporters.Length; i++)
-            {
-                var reporter = _ColorReporters[i];
-                var drawState = _drawStates[i];
-
-                if (reporter.ColorChanged)
-                {
-                    //drawState.SetColor(reporter.Color);
-                    Debug.Log("Color changed: " + reporter.Color);
-                }
             }
         }
     }
@@ -141,6 +141,7 @@ public class TubeDrawer : MonoBehaviour
         public List<Vector3> _points = new List<Vector3>();
         public List<Vector3> _smoothPoints = new List<Vector3>();
         private List<Color> _colors = new List<Color>();
+        private List<Color> _smoothColors = new List<Color>();
         private List<float> _radii = new List<float>();
 
         private TubeDrawer _parent;
@@ -164,6 +165,7 @@ public class TubeDrawer : MonoBehaviour
             _points.Clear();
             _smoothPoints.Clear();
             _colors.Clear();
+            _smoothColors.Clear();
             _radii.Clear();
 
             // Create empty tube
@@ -190,19 +192,19 @@ public class TubeDrawer : MonoBehaviour
 
             shouldAdd |= _points.Count == 0;
             shouldAdd |= Vector3.Distance(_prevPoint, position) >= _parent._minSegmentLength;
-            // TODO should add on angular change i.e. turtle rotating? Need to get turtle direction from reporter.
-            // OR flag smooth needed (after rotate) and smooth last five points?
-            // OR do dot product line post-process? Looking at Kandinsky line smoothing.
 
             if (shouldAdd)
             {
-                _points.Add(position);
                 _smoothPoints.Clear();
+                _smoothColors.Clear();
+
+                _points.Add(position);
+                _colors.Add(_parent.DrawColor);
+
                 for (int i = 0; i < _points.Count; i++)
                 {
                     AveragePoints(i);
                 }
-                _colors.Add(_parent.DrawColor); // TODO interface this with tube class
                 _radii.Add(_parent.DrawRadius);
 
                 if (_points.Count >= 2)
@@ -210,6 +212,7 @@ public class TubeDrawer : MonoBehaviour
                     UpdateRadii();
                     _tube.Create(
                         _smoothPoints.ToArray(),  // Polyline points
+                        _smoothColors.ToArray(),        // Polyline colors
                         1f,                       // Decimation (not used currently)
                         1f,                       // Scale (not used currently)
                         _radii.ToArray(),         // Radius at point
@@ -312,8 +315,12 @@ public class TubeDrawer : MonoBehaviour
                 || index >= _points.Count - _endTaper)
             {
                 _smoothPoints.Add(_points[index]);
+                _smoothColors.Add(_colors[index]);
                 return;
             }
+
+            Color colorAcumulator = Color.black;
+            Color averageColor;
 
             Vector3 acumulator = Vector3.zero;
             Vector3 averageVector;
@@ -321,10 +328,14 @@ public class TubeDrawer : MonoBehaviour
             for (int i = -1; i < _amountToAverage - 1; i++)
             {
                 acumulator += _points[index + i];
+                colorAcumulator += _colors[index + i];
             }
-            averageVector = acumulator / (float)_amountToAverage;
 
+            averageVector = acumulator / (float)_amountToAverage;
             _smoothPoints.Add(averageVector);
+
+            averageColor = colorAcumulator / (float)_amountToAverage;
+            _smoothColors.Add(averageColor);
         }
     }
 }

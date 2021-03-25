@@ -31,12 +31,13 @@ public class Turtle : MonoBehaviour
         yield return new WaitForSeconds(2);
         yield return Move(gameObject, 5f, moveSpeed);
         yield return Turn(gameObject, 80f, rotateSpeed);
+        yield return SetColor(Color.blue);
         yield return Move(gameObject, 10f, moveSpeed);
         yield return Turn(gameObject, -120f, rotateSpeed);
-        yield return SetColor(Color.red);
+        yield return SetColor(Color.green);
         yield return Move(gameObject, 5f, moveSpeed);
-        //yield return Turn(gameObject, 80f, rotateSpeed);
-        //yield return Move(gameObject, 10f, moveSpeed);
+        yield return Turn(gameObject, 80f, rotateSpeed);
+        yield return Move(gameObject, 10f, moveSpeed);
         //yield return Turn(gameObject, -120f, rotateSpeed);
         //yield return Move(gameObject, 5f, moveSpeed);
         reporter.ScheduleStop();

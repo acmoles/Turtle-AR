@@ -31,7 +31,7 @@ public class ColorReporter : Detector
 
     public void SetColor(Color col)
     {
-        Debug.Log("Set color");
+        //Debug.Log("Set color");
         _color = col;
         _shouldChange = true;
     }

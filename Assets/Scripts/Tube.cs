@@ -1,10 +1,8 @@
 ﻿///////////////////////////////////////////////////////////////////////////////
-// Author: Federico Garcia Garcia
+// Author: Federico Garcia Garcia (Modified by acmoles)
 // License: GPL-3.0
 // Created on: 04/06/2020 23:00
 ///////////////////////////////////////////////////////////////////////////////
-
-// @TODO: implement "smart decimation": not all points are equal; spikes should be preserved
 
 using System.Collections;
 using System.Collections.Generic;
@@ -12,10 +10,8 @@ using UnityEngine;
 
 public class Tube
 {
-	public static int iii = 0;
-	
 	public Vector3[] polyline; // Polyline vertices
-	public Color[] polylineColors; // Polyline point colors TODO use colors
+	public Color[] polylineColors; // Polyline point colors
 	public Vector3[] vertices; // Mesh vertices
 	public Color[] colors;     // Vertex colors
 	public int[] tris;         // Triangles that make the tube mesh
@@ -24,7 +20,7 @@ public class Tube
 	
 	private float decimation; // Decimation level, between 0 and 1
 	private float scale;      // Rescaling of the vertices
-	private float [] radii;   // Array of radius for each point TODO Start and end 5 points affected by curve (float array)
+	private float [] radii;   // Array of radius for each point
 	public int resolution ;   // Number of points per revolution
 		
 	private Vector3[] circle; // Circle to make the tubes
@@ -32,7 +28,7 @@ public class Tube
 	
 	public float length; // Length of the polyline (sum of distances between adyacent pair of points)
 	
-	public void Create(Vector3 [] polyline, float decimation, float scale, float [] radii, int resolution)
+	public void Create(Vector3 [] polyline, Color [] polylineColors, float decimation, float scale, float [] radii, int resolution)
 	{
 		// More vertices for texture seaming
 		resolution ++;
@@ -65,6 +61,7 @@ public class Tube
 		
 		int nvertices = (npoints+4) * resolution+4;
 		vertices = new Vector3[nvertices];
+		colors = new Color[nvertices];
 
 		// Number of tris
 		tpr = resolution * 2 * 3;
@@ -75,6 +72,7 @@ public class Tube
 		
 		// This polyline
 		this.polyline = new Vector3[npoints];
+		this.polylineColors = new Color[npoints];
 		
 		// Convert to one single polyline rescaling and decimating
 		float skip = (float)polyline.Length/(float)npoints;
@@ -92,10 +90,11 @@ public class Tube
 		// Rescale with skip indices
 		for(int i=0; i<npoints; i++) {
 			this.polyline[i] = polyline[skipIndices[i]] * scale;
+			this.polylineColors[i] = polylineColors[skipIndices[i]];
 		}
-			
+
 		// Create vertices
-		for(int i=0; i<vertices.Length; i++) {
+		for (int i=0; i<vertices.Length; i++) {
 			vertices[i] = new Vector3(0, 0, 0);
 		}
 		
@@ -220,6 +219,7 @@ public class Tube
 			{
 				Vector3 rotCirclePoint = rotation * (circle[i] * radii[index]);
 				vertices[index * resolution + i] = new Vector3(Q.x + rotCirclePoint.x, Q.y + rotCirclePoint.y, Q.z + rotCirclePoint.z);
+				colors[index * resolution + i] = polylineColors[index];
 			}
 		}
 		else
@@ -248,6 +248,7 @@ public class Tube
 																							// to avoid deformated tubes when the radius is too small
 
 				vertices[index * resolution + i] = new Vector3(Q.x + rotCirclePoint.x, Q.y + rotCirclePoint.y, Q.z + rotCirclePoint.z);
+				colors[index * resolution + i] = polylineColors[index];
 				// TODO add point color to vertex color[i] array
 			}
 		}

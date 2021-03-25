@@ -193,7 +193,7 @@ public class TubeGenerator : MonoBehaviour
 		tubes[i] = new Tube();
 		
 		// Generate data
-		tubes[i].Create(polylines[i], decimation, scale, radii[i], resolution);
+		//tubes[i].Create(polylines[i], decimation, scale, radii[i], resolution);
 	}
 	
 	// Create a tube by merging
@@ -202,6 +202,6 @@ public class TubeGenerator : MonoBehaviour
 		tubes[i] = new Tube();
 		
 		// Generate data
-		tubes[i].Create(polylines[i], decimation, scale, radii[i], resolution);
+		//tubes[i].Create(polylines[i], decimation, scale, radii[i], resolution);
 	}
 }

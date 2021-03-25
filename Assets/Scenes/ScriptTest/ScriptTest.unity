@@ -141,7 +141,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &204849043
 Transform:
   m_ObjectHideFlags: 0
@@ -332,7 +332,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &424488060
 Transform:
   m_ObjectHideFlags: 0
@@ -735,7 +735,7 @@ GameObject:
   - component: {fileID: 1599360587}
   - component: {fileID: 1599360586}
   m_Layer: 0
-  m_Name: TestLineDrawer
+  m_Name: TubeDrawer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -755,8 +755,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _positionReporters:
   - {fileID: 1733488488}
-  _material: {fileID: 2100000, guid: 90f5d90ec992f4983aea366642a31d25, type: 2}
-  _drawColor: {r: 1, g: 1, b: 1, a: 1}
+  _ColorReporters:
+  - {fileID: 1733488490}
+  _material: {fileID: 2100000, guid: 9983957d1233ab045bfb8c1ec636fa00, type: 2}
+  _drawColor: {r: 0.12641507, g: 1, b: 0.7399286, a: 1}
   _drawRadius: 0.2
   _drawResolution: 6
   _minSegmentLength: 0.16
@@ -792,7 +794,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1640606453
 Transform:
   m_ObjectHideFlags: 0
@@ -801,7 +803,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1640606452}
   m_LocalRotation: {x: 0.3736123, y: 0.082827814, z: -0.19996405, w: 0.90198}
-  m_LocalPosition: {x: 0.41, y: 0.62, z: 0.62}
+  m_LocalPosition: {x: 0.48, y: 0.73, z: 0.73}
   m_LocalScale: {x: 0.10000001, y: 1, z: 0.10000001}
   m_Children: []
   m_Father: {fileID: 1733488489}
@@ -879,8 +881,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1733488489}
-  - component: {fileID: 1733488488}
   - component: {fileID: 1733488487}
+  - component: {fileID: 1733488488}
+  - component: {fileID: 1733488490}
   m_Layer: 0
   m_Name: Turtle
   m_TagString: Untagged
@@ -902,7 +905,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   logging: 0
   moveAcceleration: 2
-  moveSpeed: 5
+  moveSpeed: 20
   rotateAcceleration: 20
   rotateSpeed: 180
 --- !u!114 &1733488488
@@ -941,6 +944,24 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1733488490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1733488486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52c3ab88b3075b943ae131282a2890ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnActivate:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDeactivate:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &2082955435
 GameObject:
   m_ObjectHideFlags: 0
@@ -959,7 +980,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2082955436
 Transform:
   m_ObjectHideFlags: 0
