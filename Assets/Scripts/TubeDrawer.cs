@@ -129,7 +129,7 @@ public class TubeDrawer : MonoBehaviour
             {
                 // Draw circle gizmo
                 Gizmos.color = Color.red;
-                Gizmos.DrawSphere(linePoint, 0.05f);
+                Gizmos.DrawSphere(linePoint, 0.005f);
             }
         }
 
