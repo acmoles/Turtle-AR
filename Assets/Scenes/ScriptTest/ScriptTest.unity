@@ -557,6 +557,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: TurtleDrawer
       objectReference: {fileID: 0}
+    - target: {fileID: 3168876681408605474, guid: cd0026b1d95734e4bab31ec3f715b4f7,
+        type: 3}
+      propertyPath: doSpiral
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6798527371223006172, guid: cd0026b1d95734e4bab31ec3f715b4f7,
         type: 3}
       propertyPath: m_RootOrder

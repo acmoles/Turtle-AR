@@ -92,7 +92,7 @@ public class TubeDrawer : MonoBehaviour
                 if (reporter.ColorChanged)
                 {
                     _drawColor = reporter.Color;
-                    Debug.Log("Color changed: " + _drawColor);
+                    //Debug.Log("Color changed: " + _drawColor);
                 }
             }
         }

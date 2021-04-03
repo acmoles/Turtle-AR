@@ -14,13 +14,22 @@ public class Turtle : MonoBehaviour
     private PositionReporter reporter;
     private ColorReporter colorReporter;
 
+    public bool doSpiral = false;
+
     // Start is called before the first frame update
     void Start()
     {
         reporter = GetComponent<PositionReporter>();
         colorReporter = GetComponent<ColorReporter>();
         //StartCoroutine(MoveOverSeconds(gameObject, endPosition, moveTime));
-        StartCoroutine(DoSequence());
+        if (doSpiral)
+        {
+            StartCoroutine(DoSpiral());
+        }
+        else
+        {
+            StartCoroutine(DoSequence());
+        }
     }
 
     private IEnumerator DoSequence()
@@ -39,11 +48,33 @@ public class Turtle : MonoBehaviour
         yield return Dive(gameObject, -40f, rotateSpeed);
         yield return SetColor(Color.green);
         yield return Move(gameObject, 0.4f, moveSpeed);
+        yield return new WaitForSeconds(4);
+        this.moveSpeed = 2;
+        this.rotateSpeed = 360;
+        yield return DoSpiral();
         //yield return Turn(gameObject, -120f, rotateSpeed);
         //yield return Move(gameObject, 5f, moveSpeed);
         reporter.ScheduleStop();
         Debug.Log("Sequence Done!");
         // TODO repeat sequence button in Unity UI
+    }
+
+    private IEnumerator DoSpiral()
+    {
+        Debug.Log("Sequence Started!");
+        reporter.ScheduleStart();
+        yield return null;
+        yield return new WaitForSeconds(4);
+        for (int i = 0; i < 120; i++)
+        {
+            Color lerpedColor = Color.Lerp(Color.blue, Color.green, Mathf.PingPong(Time.time, 1));
+            yield return SetColor(lerpedColor);
+            yield return Move(gameObject, 0.1f, moveSpeed);
+            yield return Turn(gameObject, 5f, rotateSpeed);
+            yield return Dive(gameObject, 5f, rotateSpeed);
+        }
+        reporter.ScheduleStop();
+        Debug.Log("Sequence Done!");
     }
 
     private IEnumerator Turn(GameObject objectToMove, float angle, float speed)
